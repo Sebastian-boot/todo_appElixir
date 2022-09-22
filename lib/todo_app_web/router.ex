@@ -24,6 +24,7 @@ defmodule TodoAppWeb.Router do
     resources "/tasks", TaskController
     resources "/lists", ListController
     live "/simple", SimpleLive
+    live "/lists_tasks", ListTaskLive
   end
 
   # Other scopes may use custom stacks.

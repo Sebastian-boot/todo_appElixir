@@ -5,44 +5,52 @@ defmodule TodoAppWeb.ListTaskLive do
   alias TodoApp.Todos.Task
   alias TodoApp.Todos
 
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"user_token" => token} = _session, socket) do
+    user = TodoApp.Accounts.get_user_by_session_token(token)
     changeset = Todos.change_list(%List{})
     changeset_task = Todos.change_task(%Task{})
-    socket = socket |> assign(changeset: changeset, changeset_task: changeset_task,  tasks: [])
+    socket
+    = socket
+    |> assign(
+      changeset: changeset,
+      changeset_task: changeset_task,
+      tasks: [],
+      user: user
+      )
     {:ok, socket}
   end
 
 
-  def handle_event("validate_task", %{"task" => task_params}, socket) do
+  def handle_event("validate_task", %{"task" => task_params}, %{assigns: %{user: user}} = socket) do
     changeset_task =
       %Task{}
-      |> Todos.change_task(Map.put(task_params, "user_id", 1))
+      |> Todos.change_task(Map.put(task_params, user.id))
       |> Map.put(:action, :insert)
     {:noreply,socket}
   end
 
-  def handle_event("add_task", %{"task" => task_params}, socket) do
+  def handle_event("add_task", %{"task" => task_params}, %{assigns: %{user: user}} = socket) do
     socket =
       socket
-      |> assign( tasks: [Map.put(task_params, "user_id", 1) | socket.assigns.tasks],
+      |> assign( tasks: [Map.put(task_params, "user_id", user.id) | socket.assigns.tasks],
       changeset_task: Todos.change_task(%Task{})
       )
 
     {:noreply, socket}
   end
 
-  def handle_event("validate", %{"list" => list_params}, socket) do
+  def handle_event("validate", %{"list" => list_params}, %{assigns: %{user: user}}, socket) do
     changeset =
       %List{}
-      |> Todos.change_list(Map.put(list_params, "user_id", 1))
+      |> Todos.change_list(Map.put(list_params, "user_id", user.id))
       |> Map.put(:action, :insert)
 
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("save", %{"list" => list_params}, socket) do
+  def handle_event("save", %{"list" => list_params}, %{assigns: %{user: user}} = socket) do
     list_params
-    |> Map.put("user_id", 1)
+    |> Map.put("user_id", user.id)
     |> Map.put("tasks", socket.assigns.tasks)
     |> Todos.create_list_with_tasks()
     |> case do

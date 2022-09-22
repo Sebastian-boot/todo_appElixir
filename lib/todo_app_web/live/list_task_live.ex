@@ -5,18 +5,16 @@ defmodule TodoAppWeb.ListTaskLive do
   alias TodoApp.Todos.Task
   alias TodoApp.Todos
 
-  def mount(_params, %{"user_token" => token} = _session, socket) do
-    user = TodoApp.Accounts.get_user_by_session_token(token)
+  def mount(_params, _session, socket) do
     changeset = Todos.change_list(%List{})
     changeset_task = Todos.change_task(%Task{})
-    socket
-    = socket
-    |> assign(
-      changeset: changeset,
-      changeset_task: changeset_task,
-      tasks: [],
-      user: user
-      )
+    socket =
+      socket
+      |> assign(
+        changeset: changeset,
+        changeset_task: changeset_task,
+        tasks: []
+        )
     {:ok, socket}
   end
 

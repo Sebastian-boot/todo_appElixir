@@ -24,7 +24,13 @@ defmodule TodoAppWeb.Router do
     resources "/tasks", TaskController
     resources "/lists", ListController
     live "/simple", SimpleLive
-    live "/lists_tasks", ListTaskLive
+  end
+
+  live_session :default, on_mount: TodoAppWeb.SessionHook do
+    scope "/", TodoAppWeb do
+      pipe_through [:browser, :require_authenticated_user]
+      live "/lists_tasks", ListTaskLive
+    end
   end
 
   # Other scopes may use custom stacks.

@@ -9,16 +9,17 @@ defmodule TodoApp.Todos.Task do
     belongs_to :user, User
     field :description, :string
     field :done, :boolean, default: false
+    field :expiration, :naive_datetime
     timestamps()
   end
 
   @doc false
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:description, :done, :user_id])
+    |> cast(attrs, [:description, :done, :expiration, :user_id])
     |> validate_required([:description, :done, :user_id])
     |> validate_length(:description, min: 5)
-    |> foreign_key_constraint(:user)
+    |> foreign_key_constraint(:user_id)
   end
 
   def query_for_tasks(done) do

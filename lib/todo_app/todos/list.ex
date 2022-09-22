@@ -30,6 +30,13 @@ defmodule TodoApp.Todos.List do
 
   end
 
+  @doc false
+  def changeset_with_tasks(list, attrs) do
+    list
+    |> changeset(attrs)
+    |> validate_length(:tasks, min: 1)
+  end
+
   def lists_by_user(user_id) do
     from t in __MODULE__,
       where: t.user_id == ^user_id,

@@ -145,7 +145,7 @@ defmodule TodoApp.Todos do
     |>Repo.preload(:user)
   end
 
-  def get_list!(id), do: Repo.get!(List, id)
+  def get_list!(id), do: Repo.get!(List, id) |> Repo.preload(:tasks)
 
   @doc """
   Creates a list.

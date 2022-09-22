@@ -8,10 +8,18 @@
   </li>
 
   <li>
-    <strong>Tasgs:</strong>
+    <strong>Tags:</strong>
     <%= @list.tags %>
   </li>
 
+</ul>
+
+<h2>Tasks for this List</h2>
+
+<ul>
+  <%= for t <- @list.tasks do %>
+    <li><%= t.description %></li>
+  <% end %>
 </ul>
 
 <span><%= link "Edit", to: Routes.list_path(@conn, :edit, @list) %></span> |
